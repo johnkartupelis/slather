@@ -8,6 +8,7 @@ require_relative '../lib/slather/command/setup_command'
 class MainCommand < Clamp::Command
   self.default_subcommand = "coverage"
 
+  puts "Running slather..."
   subcommand "setup", "Configures a .xcodeproj for test coverage generation", SetupCommand
   subcommand "coverage", "Computes coverage for the supplied project", CoverageCommand
 end

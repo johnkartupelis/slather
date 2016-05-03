@@ -99,13 +99,18 @@ module Slather
       def coveralls_coverage_data
         if ci_service == :travis_ci || ci_service == :travis_pro
           if travis_job_id
+            puts "Travis Job"
             if ci_service == :travis_ci
+              puts "Travis CI standard job"
               {
                 :service_job_id => travis_job_id,
                 :service_name => "travis-ci",
                 :source_files => coverage_files.map(&:as_json)
               }.to_json
             elsif ci_service == :travis_pro
+              puts "Travis Pro job"
+              puts "Travis job ID: #{travis_job_id}"
+              puts "Travis repo token: #{coverage_access_token}"
               {
                 :service_job_id => travis_job_id,
                 :service_name => "travis-pro",
@@ -168,11 +173,12 @@ module Slather
       private :coveralls_coverage_data
 
       def post
+        puts "Uploading coveralls json file to #{coveralls_api_jobs_path}"
         f = File.open('coveralls_json_file', 'w+')
         begin
           f.write(coveralls_coverage_data)
           f.close
-          `curl -s --form json_file=@#{f.path} #{coveralls_api_jobs_path}`
+          puts `curl -s --form json_file=@#{f.path} #{coveralls_api_jobs_path}`
         rescue StandardError => e
           FileUtils.rm(f)
           raise e
